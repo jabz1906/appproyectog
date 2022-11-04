@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/Alfredo/StudioProjects/appVolundr/app/src/main/res/layout/activity_event.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Alfredo/StudioProjects/appVolundr/app/src/main/res/layout/activity_events.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Alfredo/StudioProjects/appVolundr/app/src/main/res/layout/activity_forms.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/Alfredo/StudioProjects/appVolundr/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/Users/PC-John/AndroidStudioProjects/volunder/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2705" />
+        <entry key="..\:/Users/PC-John/AndroidStudioProjects/volunder/app/src/main/res/drawable/ic_baseline_handyman_24.xml" value="0.2705" />
+        <entry key="..\:/Users/PC-John/AndroidStudioProjects/volunder/app/src/main/res/drawable/rounded_corner.xml" value="0.1995" />
+        <entry key="..\:/Users/PC-John/AndroidStudioProjects/volunder/app/src/main/res/layout/activity_event.xml" value="0.190625" />
+        <entry key="..\:/Users/PC-John/AndroidStudioProjects/volunder/app/src/main/res/layout/activity_event_form.xml" value="0.18854166666666666" />
+        <entry key="..\:/Users/PC-John/AndroidStudioProjects/volunder/app/src/main/res/layout/activity_events.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/PC-John/AndroidStudioProjects/volunder/app/src/main/res/layout/activity_forms.xml" value="0.17831813576494426" />
+        <entry key="..\:/Users/PC-John/AndroidStudioProjects/volunder/app/src/main/res/layout/activity_main.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/PC-John/AndroidStudioProjects/volunder/app/src/main/res/layout/item_event.xml" value="0.19166666666666668" />
+        <entry key="..\:/Users/PC-John/AndroidStudioProjects/volunder/app/src/main/res/layout/item_form.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/PC-John/AndroidStudioProjects/volunder/app/src/main/res/layout/item_spinner.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/PC-John/AndroidStudioProjects/volunder/app/src/main/res/menu/menu_main.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/PC-John/AndroidStudioProjects/volunder/app/src/main/res/xml/file_paths.xml" value="0.18840579710144928" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
