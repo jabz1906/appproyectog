@@ -38,7 +38,7 @@ public class Event extends AppCompatActivity {
     String email, token;
     Integer event_id;
     Generator generator;
-    Integer form_parent_id;
+    Integer form_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +65,7 @@ public class Event extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(Event.this, EventForm.class);
-                intent.putExtra("form_id", form_parent_id);
+                intent.putExtra("form_id", form_id);
                 intent.putExtra("parent_id", event_id);
                 startActivity(intent);
                 finish();
@@ -121,7 +121,7 @@ public class Event extends AppCompatActivity {
                         JSONObject form = response.getJSONObject("data");
                         String name = form.getString("form_name");
                         String description = form.getString("form_description");
-                        form_parent_id = form.getInt("form_parent_id");
+                        form_id = form.getInt("form_id");
                         generator.createdTitle(name);
                         generator.createdText(description);
                         JSONArray questions = form.getJSONArray("questions");
@@ -129,23 +129,31 @@ public class Event extends AppCompatActivity {
                             JSONObject question = questions.getJSONObject(i);
                             String questionText = question.getString("name");
                             String answer = question.getString("answer");
+                            int status = question.getInt("status");
+                            Log.w("status", "" + status);
+                            if (status == 1) {
+                                if (question.getInt("type_id") == 1) {
+                                    generator.createdQuestion(questionText, 0);
+                                }
 
-                            if (question.getInt("type_id") == 1) {
-                                generator.createdQuestion(questionText, 0);
-                            }
+                                if (question.getInt("type_id") == 2) {
+                                    generator.createdText(questionText);
+                                }
 
-                            if (question.getInt("type_id") == 2) {
-                                generator.createdText(questionText);
-                            }
+                                if (question.getInt("type_id") > 2 && question.getInt("type_id") < 8) {
+                                    generator.createdQuestion(questionText, 0);
+                                    generator.createdText(answer);
+                                }
 
-                            if (question.getInt("type_id") > 2 && question.getInt("type_id") < 8) {
-                                generator.createdQuestion(questionText, 0);
-                                generator.createdText(answer);
-                            }
+                                if (question.getInt("type_id") == 8 || question.getInt("type_id") == 9) {
+                                    generator.createdQuestion(questionText, 0);
+                                    generator.createdImage(answer);
+                                }
 
-                            if (question.getInt("type_id") == 8 || question.getInt("type_id") == 9) {
-                                generator.createdQuestion(questionText, 0);
-                                generator.createdImage(answer);
+                                if (question.getInt("type_id") == 10) {
+                                    generator.createdQuestion(questionText, 0);
+                                    generator.createdText(answer);
+                                }
                             }
                         }
                     } else {

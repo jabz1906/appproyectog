@@ -1,8 +1,7 @@
 <resources>
     <string name="app_name">Aruquipa y Asociados</string>
-    <string name="url">http://volundr.ajatic.com/api
-    </string>
-    <string name="app">Proyectog</string>
+    <string name="url">http://172.148.0.108/proyectog/public/api</string>
+    <string name="app">Aruquipa y Asociados</string>
     <string name="email">Correo</string>
     <string name="password">Contraseña</string>
     <string name="login">Ingresar</string>

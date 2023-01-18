@@ -19,6 +19,7 @@ import android.text.InputFilter;
 import android.text.InputType;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -64,6 +65,7 @@ public class Generator {
     private ArrayList<TextView> hours = new ArrayList<>();
     private ArrayList<ImageObject> images = new ArrayList<>();
     private ArrayList<ImageObject> signatures = new ArrayList<>();
+    private ArrayList<Spinner> selectionsSpecial = new ArrayList<>();
 
     public int imageId;
     public ImageObject imageObjectSelected;
@@ -228,7 +230,7 @@ public class Generator {
 
         llContainer.addView(spinner);
 
-        selections.add(spinner);
+        selectionsSpecial.add(spinner);
     }
 
     public void createdTextViewDate(int question_id, int mandatory) {
@@ -538,6 +540,25 @@ public class Generator {
             }
         }
 
+        for (Iterator iterator = selectionsSpecial.iterator(); iterator.hasNext(); ) {
+            Spinner spinner = (Spinner) iterator.next();
+            int position = spinner.getSelectedItemPosition();
+            OptionObject selected = (OptionObject) spinner.getItemAtPosition(position);
+            int question_id =  spinner.getId();
+            int option_id = selected.getId();
+
+            try {
+                JSONObject answer = new JSONObject();
+                answer.put("question_id", question_id);
+                answer.put("option_id", 0);
+                answer.put("input_data", option_id);
+                answer.put("media_file", 0);
+                answers.put(answer);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
         Util util = new Util(activity);
 
         try {
@@ -549,7 +570,7 @@ public class Generator {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
+        Log.w("json", "" + eventForm);
         return validated;
     }
 
