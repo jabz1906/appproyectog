@@ -1,4 +1,5 @@
 package com.abogados.proyectog;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -79,7 +80,7 @@ public class bd {
         bdHelper.close();
     }
 
-    public long createSession(Integer user_id, String userEmail, String token, String date)
+    public void createSession(Integer user_id, String userEmail, String token, String date)
             throws SQLException {
         // TODO Auto-generated method stub
         String status = "Active";
@@ -92,14 +93,21 @@ public class bd {
         cv.put(this.created_at, date);
         cv.put(this.updated_at, date);
 
-        return sqLiteDatabase.insert(sessions, null, cv);
+        sqLiteDatabase.insert(sessions, null, cv);
     }
 
     public Cursor searchSessionActive() throws SQLException {
-
         String selectQuery = "SELECT * FROM " + sessions + " WHERE " + status
                 + " = 'Active'";
         Cursor cursor = sqLiteDatabase.rawQuery(selectQuery, null);
         return cursor;
+    }
+
+    public void closeSession(String userEmail) throws SQLException {
+        String status = "Inactive";
+
+        ContentValues cv = new ContentValues();
+        cv.put(this.status, status);
+        sqLiteDatabase.update(sessions, cv, this.userEmail + "='" + userEmail + "'", null);
     }
 }

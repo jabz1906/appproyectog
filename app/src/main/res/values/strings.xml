@@ -7,5 +7,6 @@
     <string name="login">Ingresar</string>
     <string name="form">Formulario</string>
     <string name="save">Guardar</string>
+    <string name="finish">Finalizar</string>
     <string name="next">Siguiente</string>
 </resources>

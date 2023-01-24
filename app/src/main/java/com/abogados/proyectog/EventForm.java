@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -77,8 +79,9 @@ public class EventForm extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(generator.validate()) {
-                    sendEventForm("event-form");
+                if (generator.validate()) {
+                    //sendEventForm("event-form");
+                    saveData();
                 } else {
                     util.completeData();
                 }
@@ -99,6 +102,8 @@ public class EventForm extends AppCompatActivity {
         int id = item.getItemId();
         switch (id) {
             case R.id.logout:
+
+                logout("logout");
 
                 return true;
 
@@ -241,6 +246,7 @@ public class EventForm extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
                 Intent intent = new Intent(EventForm.this, Events.class);
                 startActivity(intent);
                 finish();
@@ -297,6 +303,78 @@ public class EventForm extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void logout(String direction) {
+
+        String url = getString(R.string.url) + "/" + direction;
+
+        ProgressDialog progressDialog;
+        progressDialog = new ProgressDialog(this);
+        //progressDialog.setMax(100);
+        progressDialog.setMessage("Cargando...");
+        progressDialog.setTitle("Revisando la Informacion");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.show();
+        progressDialog.setCancelable(false);
+
+        RequestQueue requestQueue;
+        requestQueue = Volley.newRequestQueue(this);
+        JsonObjectRequest jsonObjectRequest;
+
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                progressDialog.dismiss();
+                Log.w("response", "" + response);
+                try {
+                    if (response.getInt("code") == 200) {
+                        util.closeSession(email);
+                        Toast.makeText(EventForm.this, "", Toast.LENGTH_LONG).show();
+                        finish();
+                    } else {
+                        Toast.makeText(EventForm.this, "", Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.w("error", "" + error);
+                progressDialog.dismiss();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<>();
+                params.put("Content-Type", "application/json");
+                params.put("Authorization", "Bearer " + token);
+                return params;
+            }
+        };
+
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    public void saveData() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Importante");
+        builder.setMessage("Los datos no podrán ser cambiados una vez se guarde la información");
+        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+            }
+        });
+        builder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                sendEventForm("event-form");
+            }
+        });
+        builder.create();
+        builder.show();
     }
 
     @Override

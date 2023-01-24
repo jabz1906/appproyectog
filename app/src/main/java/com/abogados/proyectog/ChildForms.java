@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Forms extends AppCompatActivity {
+public class ChildForms extends AppCompatActivity {
     ListView lvForms;
 
     ArrayList<FormObject> items = new ArrayList<>();
@@ -40,18 +40,25 @@ public class Forms extends AppCompatActivity {
     Integer user_id;
     String email, token;
 
+    Integer form_id;
+    Integer parent_id;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_forms);
+        setContentView(R.layout.activity_child_forms);
 
         lvForms = findViewById(R.id.lvForms);
 
-        util = new Util(Forms.this);
+        util = new Util(ChildForms.this);
         Cursor cursor = util.getSession();
         user_id = cursor.getInt(1);
         email = cursor.getString(2);
         token = cursor.getString(3);
+
+        Bundle selection = this.getIntent().getExtras();
+        form_id = selection.getInt("form_id");
+        parent_id = selection.getInt("parent_id");
 
         forms("form");
 
@@ -61,9 +68,9 @@ public class Forms extends AppCompatActivity {
                 FormObject form = (FormObject) adapterView.getItemAtPosition(i);
                 Integer form_id = form.getId();
 
-                Intent intent = new Intent(Forms.this, EventForm.class);
+                Intent intent = new Intent(ChildForms.this, EventForm.class);
                 intent.putExtra("form_id", form_id);
-                intent.putExtra("parent_id", 0);
+                intent.putExtra("parent_id", parent_id);
                 startActivity(intent);
                 finish();
             }
@@ -95,7 +102,7 @@ public class Forms extends AppCompatActivity {
 
     private void forms(String direction) {
 
-        String url = getString(R.string.url) + "/" + direction;
+        String url = getString(R.string.url) + "/" + direction + "/" + form_id;
 
         ProgressDialog progressDialog;
         progressDialog = new ProgressDialog(this);
@@ -117,14 +124,14 @@ public class Forms extends AppCompatActivity {
                 Log.w("response", "" + response);
                 try {
                     if (response.getInt("code") == 200) {
-                        JSONArray forms = response.getJSONArray("data");
+                        JSONArray forms = response.getJSONArray("child");
                         for (int i = 0; i < forms.length(); i++) {
                             JSONObject form = forms.getJSONObject(i);
                             Integer id = form.getInt("id");
                             Integer parent_id = null;
                             if(!form.getString("parent_id").equals("null"))
                             {
-                                 parent_id = form.getInt("parent_id");
+                                parent_id = form.getInt("parent_id");
                             }
                             String color = "#0572C2";
                             String name = form.getString("name");
@@ -133,10 +140,10 @@ public class Forms extends AppCompatActivity {
 
                             items.add(new FormObject(id, parent_id, color, name, description, image));
                         }
-                        FormsAdapter formsAdapter = new FormsAdapter(Forms.this, items);
+                        FormsAdapter formsAdapter = new FormsAdapter(ChildForms.this, items);
                         lvForms.setAdapter(formsAdapter);
                     } else {
-                        Toast.makeText(Forms.this, "", Toast.LENGTH_LONG).show();
+                        Toast.makeText(ChildForms.this, "", Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -188,10 +195,10 @@ public class Forms extends AppCompatActivity {
                 try {
                     if (response.getInt("code") == 200) {
                         util.closeSession(email);
-                        Toast.makeText(Forms.this, "", Toast.LENGTH_LONG).show();
+                        Toast.makeText(ChildForms.this, "", Toast.LENGTH_LONG).show();
                         finish();
                     } else {
-                        Toast.makeText(Forms.this, "", Toast.LENGTH_LONG).show();
+                        Toast.makeText(ChildForms.this, "", Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -218,7 +225,7 @@ public class Forms extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(Forms.this, Events.class);
+        Intent intent = new Intent(ChildForms.this, Events.class);
         startActivity(intent);
         finish();
     }

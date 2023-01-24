@@ -2,6 +2,7 @@ package com.abogados.proyectog;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -79,6 +80,17 @@ public class Util {
         }
         connection.close();
         return cursor;
+    }
+
+    public void closeSession(String email) {
+        bd connection = new bd(context);
+        try {
+            connection.open();
+            connection.closeSession(email);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        connection.close();
     }
 
     public void completeData() {

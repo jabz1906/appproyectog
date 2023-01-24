@@ -32,6 +32,7 @@ import java.util.Map;
 public class Event extends AppCompatActivity {
     LinearLayout llContainer;
     Button btnNext;
+    Button btnFinish;
 
     Util util;
     Integer user_id;
@@ -47,6 +48,7 @@ public class Event extends AppCompatActivity {
 
         llContainer = findViewById(R.id.llContainer);
         btnNext = findViewById(R.id.btnNext);
+        btnFinish = findViewById(R.id.btnFinish);
 
         util = new Util(Event.this);
         Cursor cursor = util.getSession();
@@ -64,11 +66,18 @@ public class Event extends AppCompatActivity {
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Event.this, EventForm.class);
+                Intent intent = new Intent(Event.this, ChildForms.class);
                 intent.putExtra("form_id", form_id);
                 intent.putExtra("parent_id", event_id);
                 startActivity(intent);
                 finish();
+            }
+        });
+
+        btnFinish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finalizeEvent("event");
             }
         });
     }
@@ -86,6 +95,8 @@ public class Event extends AppCompatActivity {
         int id = item.getItemId();
         switch (id) {
             case R.id.logout:
+
+                logout("logout");
 
                 return true;
 
@@ -122,6 +133,10 @@ public class Event extends AppCompatActivity {
                         String name = form.getString("form_name");
                         String description = form.getString("form_description");
                         form_id = form.getInt("form_id");
+                        int form_child = form.getInt("form_child");
+                        if (form_child == 1) {
+                            btnNext.setVisibility(View.VISIBLE);
+                        }
                         generator.createdTitle(name);
                         generator.createdText(description);
                         JSONArray questions = form.getJSONArray("questions");
@@ -129,31 +144,28 @@ public class Event extends AppCompatActivity {
                             JSONObject question = questions.getJSONObject(i);
                             String questionText = question.getString("name");
                             String answer = question.getString("answer");
-                            int status = question.getInt("status");
-                            Log.w("status", "" + status);
-                            if (status == 1) {
-                                if (question.getInt("type_id") == 1) {
-                                    generator.createdQuestion(questionText, 0);
-                                }
 
-                                if (question.getInt("type_id") == 2) {
-                                    generator.createdText(questionText);
-                                }
+                            if (question.getInt("type_id") == 1) {
+                                generator.createdQuestion(questionText, 0);
+                            }
 
-                                if (question.getInt("type_id") > 2 && question.getInt("type_id") < 8) {
-                                    generator.createdQuestion(questionText, 0);
-                                    generator.createdText(answer);
-                                }
+                            if (question.getInt("type_id") == 2) {
+                                generator.createdText(questionText);
+                            }
 
-                                if (question.getInt("type_id") == 8 || question.getInt("type_id") == 9) {
-                                    generator.createdQuestion(questionText, 0);
-                                    generator.createdImage(answer);
-                                }
+                            if (question.getInt("type_id") > 2 && question.getInt("type_id") < 8) {
+                                generator.createdQuestion(questionText, 0);
+                                generator.createdText(answer);
+                            }
 
-                                if (question.getInt("type_id") == 10) {
-                                    generator.createdQuestion(questionText, 0);
-                                    generator.createdText(answer);
-                                }
+                            if (question.getInt("type_id") == 8 || question.getInt("type_id") == 9) {
+                                generator.createdQuestion(questionText, 0);
+                                generator.createdImage(answer);
+                            }
+
+                            if (question.getInt("type_id") == 10) {
+                                generator.createdQuestion(questionText, 0);
+                                generator.createdText(answer);
                             }
                         }
                     } else {
@@ -180,5 +192,120 @@ public class Event extends AppCompatActivity {
         };
 
         requestQueue.add(jsonObjectRequest);
+    }
+
+    private void finalizeEvent(String direction) {
+
+        String url = getString(R.string.url) + "/" + direction + "/" + event_id;
+
+        ProgressDialog progressDialog;
+        progressDialog = new ProgressDialog(this);
+        //progressDialog.setMax(100);
+        progressDialog.setMessage("Cargando...");
+        progressDialog.setTitle("Revisando la Informacion");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.show();
+        progressDialog.setCancelable(false);
+
+        RequestQueue requestQueue;
+        requestQueue = Volley.newRequestQueue(this);
+        JsonObjectRequest jsonObjectRequest;
+
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                progressDialog.dismiss();
+                Log.w("response", "" + response);
+                try {
+                    if (response.getInt("code") == 200) {
+                        Toast.makeText(Event.this, "Se finalizo correctamente", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(Event.this, "", Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                Intent intent = new Intent(Event.this, Events.class);
+                startActivity(intent);
+                finish();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.w("error", "" + error);
+                progressDialog.dismiss();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<>();
+                params.put("Content-Type", "application/json");
+                params.put("Authorization", "Bearer " + token);
+                return params;
+            }
+        };
+
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    private void logout(String direction) {
+
+        String url = getString(R.string.url) + "/" + direction;
+
+        ProgressDialog progressDialog;
+        progressDialog = new ProgressDialog(this);
+        //progressDialog.setMax(100);
+        progressDialog.setMessage("Cargando...");
+        progressDialog.setTitle("Revisando la Informacion");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.show();
+        progressDialog.setCancelable(false);
+
+        RequestQueue requestQueue;
+        requestQueue = Volley.newRequestQueue(this);
+        JsonObjectRequest jsonObjectRequest;
+
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                progressDialog.dismiss();
+                Log.w("response", "" + response);
+                try {
+                    if (response.getInt("code") == 200) {
+                        util.closeSession(email);
+                        Toast.makeText(Event.this, "", Toast.LENGTH_LONG).show();
+                        finish();
+                    } else {
+                        Toast.makeText(Event.this, "", Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.w("error", "" + error);
+                progressDialog.dismiss();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<>();
+                params.put("Content-Type", "application/json");
+                params.put("Authorization", "Bearer " + token);
+                return params;
+            }
+        };
+
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(Event.this, Events.class);
+        startActivity(intent);
+        finish();
     }
 }

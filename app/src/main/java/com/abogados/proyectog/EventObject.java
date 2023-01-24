@@ -2,15 +2,13 @@ package com.abogados.proyectog;
 
 public class EventObject {
     protected Integer id;
-    protected Integer child_id;
     protected String color;
     protected String formName;
     protected String userName;
     protected String registered;
 
-    public EventObject(Integer id, Integer child_id, String color, String formName, String userName, String registered) {
+    public EventObject(Integer id, String color, String formName, String userName, String registered) {
         this.id = id;
-        this.child_id = child_id;
         this.color = color;
         this.formName = formName;
         this.userName = userName;
@@ -23,14 +21,6 @@ public class EventObject {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Integer getChild_id() {
-        return child_id;
-    }
-
-    public void setChild_id(Integer child_id) {
-        this.child_id = child_id;
     }
 
     public String getColor() {
